@@ -1,0 +1,33 @@
+// config/tests.js
+// Add this before module.exports in config/tests.js to verify sequelize instance
+console.log("Trying loading all  imported files including dbConfig.....")
+require('dotenv').config();
+const { Sequelize } = require('sequelize');
+
+// Initialize Sequelize
+const sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+        host: process.env.DB_HOST,
+        dialect: 'mysql',
+        pool: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 10000,
+        },
+    }
+);
+
+// Test the connection
+sequelize.authenticate()
+    .then(() => {
+        console.log('Database connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
+
+module.exports = { sequelize };

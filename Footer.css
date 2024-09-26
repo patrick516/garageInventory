@@ -1,0 +1,13 @@
+/* src/assets/styles/Footer.css */
+
+.footer {
+    background-color: #34495e;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+  

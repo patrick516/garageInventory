@@ -1,0 +1,108 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  width: 100vh;
+  background-image: url('../../assets/images/background2.jpg'); /* Adjust the path if necessary */
+  background-size: cover;
+  background-position: center;
+}
+
+.login-form {
+  background-color: rgba(255, 255, 255, 0.8); /* White background with transparency */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #000080;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0000a0;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.login-options a {
+  color: #000080;
+  text-decoration: none;
+}
+
+.login-options a:hover {
+  text-decoration: underline;
+}
+
+/* New CSS for the popup message */
+.popup-message {
+  margin-bottom: 15px; /* Adjusted to create a better visual separation */
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  position: relative; /* Changed from absolute to relative */
+  top: -10px; /* Adjust this value to move the popup closer to the form */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%; /* Ensures the popup spans the form width */
+  box-sizing: border-box;
+}
+
+.popup-message.success {
+  background-color: #4CAF50; /* Green for success */
+  color: white;
+}
+
+.popup-message.error {
+  background-color: #f44336; /* Red for errors */
+  color: white;
+}
+.login-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 10px;
+}
+
+.forgot-password-link,
+.register-link {
+  margin-bottom: 5px;
+}
+
+.login-options a {
+  color: #000080;
+  text-decoration: none;
+}
+
+.login-options a:hover {
+  text-decoration: underline;
+}
+
