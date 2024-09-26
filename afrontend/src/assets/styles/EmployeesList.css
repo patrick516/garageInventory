@@ -1,0 +1,171 @@
+/* Container for the entire employee list component */
+.employee-list-container {
+  display: flex; /* Use flex to align items */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center the items */
+  padding: 2px; /* Add padding around the container */
+}
+
+/* Button to toggle the form visibility */
+.toggle-form-button {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  padding: 10px 15px; /* Add padding */
+  cursor: pointer; /* Pointer cursor on hover */
+  margin-bottom: 20px; /* Margin below the button */
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* Form container for adding/editing an employee */
+.employee-form-container {
+  width: 100%; /* Full width */
+  max-width: 500px; /* Set a maximum width for the form */
+  background-color: #f9f9f9; /* Light background */
+  border-radius: 8px; /* Rounded corners */
+  padding: 5px; /* Add padding inside the form */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+/* Form styles */
+.employee-form {
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack form fields vertically */
+}
+
+/* Label styles */
+.employee-form label {
+  margin-bottom: 5px; /* Space between label and input */
+}
+
+/* Input fields */
+.employee-form input {
+  padding: 10px; /* Add padding inside input */
+  border: 1px solid #ccc; /* Border style */
+  border-radius: 4px; /* Rounded corners */
+  margin-bottom: 15px; /* Space between inputs */
+  width: 100%; /* Full width */
+}
+
+/* Error message styles */
+.error {
+  color: red; /* Red color for errors */
+  font-size: 0.85em; /* Smaller font size */
+  margin-top: -10px; /* Negative margin for tighter spacing */
+  margin-bottom: 10px; /* Space below error message */
+}
+
+/* Button for submitting the form */
+.employee-form button {
+  background-color: #28a745; /* Green for submit button */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  padding: 10px; /* Add padding */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* Container for the employee list table */
+.employee-list-wrapper {
+  width: 95%; /* Full width of the container */
+  max-width: 1000px; /* Set a maximum width for the table wrapper */
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+/* Table styles */
+.employee-table {
+  width: 100%; /* Full width for the table */
+  border-collapse: collapse; /* Collapse borders for a clean look */
+}
+
+/* Header and cell styles */
+.employee-table th,
+.employee-table td {
+  padding: 10px; /* Add padding for better spacing */
+  text-align: left; /* Align text to the left */
+  border-bottom: 1px solid #ddd; /* Add border for separation */
+}
+
+/* Header background color */
+.employee-table th {
+  background-color: #f4f4f4; /* Background color for headers */
+}
+
+/* Cell styles for better visibility */
+.employee-table td {
+  max-width: 150px; /* Limit width of cells */
+  overflow: hidden; /* Prevent overflow */
+  text-overflow: ellipsis; /* Show ellipsis for overflowed text */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Action buttons in the last column */
+.employee-table td:last-child {
+  display: flex; /* Use flexbox for actions */
+  justify-content: space-around; /* Space icons evenly */
+  align-items: center; /* Center icons vertically */
+  width: 100px; /* Set a fixed width for the actions column */
+  padding: 0; /* Remove padding */
+}
+
+/* Button styles for action buttons */
+.employee-table td:last-child button {
+  background: transparent; /* Transparent background for buttons */
+  border: none; /* Remove border */
+  cursor: pointer; /* Pointer cursor on hover */
+  padding: 0; /* Remove padding */
+  margin: 0 2px; /* Small margin between buttons */
+  width: 24px; /* Fixed width for buttons to ensure they fit */
+  height: 24px; /* Fixed height for buttons to ensure they fit */
+}
+
+/* Change the color of edit and delete icons to blue */
+.employee-table td:last-child button {
+  color: blue; /* Change icon color to blue */
+}
+
+/* No employees found message */
+.no-employees {
+  text-align: center; /* Center the message */
+  color: #999; /* Light gray color */
+  font-style: italic; /* Italicize text */
+}
+
+
+
+
+
+
+
+/* Tooltip container */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Tooltip text */
+.tooltip-text {
+  visibility: hidden;
+  width: auto;
+  background-color: #150a79;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 50%; /* Position it below the text */
+  left: 50%; /* Center it horizontally */
+  transform: translate(-50%, 0); /* Center the tooltip */
+  white-space: nowrap; /* Prevents text from wrapping */
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Show the tooltip on hover */
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}

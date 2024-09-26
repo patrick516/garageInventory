@@ -1,0 +1,88 @@
+/* Staff Management Container */
+.staff-management-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+/* Buttons */
+.staff-management-button {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.staff-management-button:hover {
+  background-color: #2980b9;
+}
+
+/* Staff Section */
+.staff-section {
+  margin-top: 20px;
+}
+
+/* Submenu List */
+.submenu-list {
+  list-style: none;
+  padding-left: 20px;
+}
+
+.submenu-list li {
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.submenu-list li:hover {
+  text-decoration: underline;
+}
+
+/* Submenu Item Colors */
+.employees-list-item {
+  color: #4CAF50; /* Green color for Employees List */
+  font-weight: bold;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.employees-list-item:hover {
+  background-color: #d4edda; /* Light green background on hover */
+}
+
+.salary-calculation-item {
+  color: #FF5733; /* Orange color for Salary Calculation */
+  font-weight: bold;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.salary-calculation-item:hover {
+  background-color: #ffcccb; /* Light red background on hover */
+}
+
+/* General submenu styles */
+.submenu li {
+  list-style-type: none;
+  padding: 8px 15px;
+  margin: 5px 0;
+  border-radius: 4px;
+}
+
+/* Default Content for Staff Management */
+.default-staff-management-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.default-staff-management-content h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.default-staff-management-content p {
+  color: #7f8c8d;
+  font-size: 1.2rem;
+}

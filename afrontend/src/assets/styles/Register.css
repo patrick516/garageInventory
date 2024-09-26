@@ -1,0 +1,81 @@
+/* Register.css */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 60vw; /* Adjusted to full viewport width */
+    background-image: url('../../assets/images/background2.jpg'); /* Ensure the path is correct */
+    background-size: cover;
+    background-position: center;
+}
+
+.register-form {
+    background-color: rgba(255, 255, 255, 0.8); /* White background with transparency */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #000080;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0000a0;
+}
+
+/* Optional styles if you want to add more options */
+.register-options {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.register-options a {
+    color: #000080;
+    text-decoration: none;
+}
+
+.register-options a:hover {
+    text-decoration: underline;
+}
+.popup-message {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .popup-message.success {
+    background-color: #4CAF50; /* Green for success */
+    color: white;
+  }
+  
+  .popup-message.error {
+    background-color: #f44336; /* Red for errors */
+    color: white;
+  }

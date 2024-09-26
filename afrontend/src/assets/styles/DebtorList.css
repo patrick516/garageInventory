@@ -1,0 +1,67 @@
+/* Debtor List Table Styling */
+.debtor-list-container {
+  width: 80%;
+  margin: 20px auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 5px;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Popup Styling */
+.popup {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+  font-size: 12px;
+  z-index: 100;
+}
+
+.full-payment-popup {
+  position: absolute; /* Or 'fixed' if you want it to stay in place */
+  top: 80px; /* Adjust the position as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #d4edda; /* Example background color */
+  color: #0404e9; /* Example text color */
+  border: 1px solid #c3e6cb; /* Example border color */
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+

@@ -1,0 +1,37 @@
+.payment-form-container {
+    padding: 20px;
+  }
+  
+  .payment-form-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  .payment-form-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .payment-form-container div {
+    margin-bottom: 15px;
+  }
+  
+  .payment-form-container label {
+    margin-bottom: 5px;
+  }
+  
+  .payment-form-container input,
+  .payment-form-container select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .payment-form-container button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
