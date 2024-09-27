@@ -5,8 +5,7 @@ const authRoutes = require('./routes/authRoute');
 const inventoryRoutes = require('./routes/inventoryRoute');
 const customerRoutes = require('./routes/customerRoute');
 const employeeRoutes = require('./routes/employeeRoute');
-const salaryRoutes = require('./routes/salaryRoute'); // Import salary routes
-//const salesRoutes = require('./routes/salesRoute'); 
+const salaryRoutes = require('./routes/salaryRoute'); // Import salary routes 
 const sendReminderEmails = require('./services/reminderScheduler'); // Import the scheduler
 require('dotenv').config(); // Load environment variables
 const db = require('./config/tests'); // Import db from index.js (models)
