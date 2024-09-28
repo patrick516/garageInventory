@@ -2,7 +2,17 @@ const Product = require('../models/productModel');
 
 // Add inventory function
 exports.addInventory = async (req, res) => {
-  const { name, brand, quantity, costPerUnit, anyCostIncurred, descriptionOfCost, totalCosts, salePricePerUnit, totalCostOfSales } = req.body;
+  const {
+    name,
+    brand,
+    quantity,
+    costPerUnit,
+    anyCostIncurred,
+    descriptionOfCost,
+    totalCosts,
+    salePricePerUnit,
+    totalCostOfSales
+  } = req.body;
 
   try {
     const newProduct = await Product.create({
@@ -14,10 +24,13 @@ exports.addInventory = async (req, res) => {
       descriptionOfCost,
       totalCosts,
       salePricePerUnit,
-      totalCostOfSales,
+      totalCostOfSales
     });
 
-    res.status(201).json({ message: 'Inventory item added successfully', product: newProduct });
+    res.status(201).json({
+      message: 'Inventory item added successfully',
+      product: newProduct
+    });
   } catch (error) {
     console.error('Error adding inventory item:', error);
     res.status(500).json({ message: 'Error adding inventory item' });
@@ -57,7 +70,17 @@ exports.deleteInventory = async (req, res) => {
 // Update inventory function
 exports.updateInventory = async (req, res) => {
   const { id } = req.params;
-  const { name, brand, quantity, costPerUnit, anyCostIncurred, descriptionOfCost, totalCosts, salePricePerUnit, totalCostOfSales } = req.body;
+  const {
+    name,
+    brand,
+    quantity,
+    costPerUnit,
+    anyCostIncurred,
+    descriptionOfCost,
+    totalCosts,
+    salePricePerUnit,
+    totalCostOfSales
+  } = req.body;
 
   try {
     const product = await Product.findByPk(id);
@@ -79,7 +102,10 @@ exports.updateInventory = async (req, res) => {
 
     await product.save();
 
-    res.status(200).json({ message: 'Inventory item updated successfully', product });
+    res.status(200).json({
+      message: 'Inventory item updated successfully',
+      product
+    });
   } catch (error) {
     console.error('Error updating inventory item:', error);
     res.status(500).json({ message: 'Error updating inventory item' });

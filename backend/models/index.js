@@ -2,6 +2,7 @@
 require('dotenv').config();
 const { Sequelize, DataTypes } = require('sequelize');
 
+
 // Initialize Sequelize
 const sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -18,6 +19,10 @@ const sequelize = new Sequelize(
         },
     }
 );
+
+//Associations
+//Product.hasMany(Customer, { foreignKey: 'purchasedInventoryId' });
+//Customer.belongsTo(Product, { foreignKey: 'purchasedInventoryId' });
 
 // Test the connection
 sequelize.authenticate()

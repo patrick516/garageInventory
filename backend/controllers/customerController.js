@@ -1,44 +1,72 @@
 const db = require('../models');
-const Product = db.Product; // Ensure this path is correct
-const Customer = db.Customer; // Ensure this path is correct
+const Product = db.Product;
+const Customer = db.Customer;
 const sendEmail = require('../services/mailer');
 
 // Add a new customer
 exports.addCustomer = async (req, res) => {
-    console.log('Request received:', req.body);
-
-    const { name, email, phone, purchasedInventoryId, quantity = 1, totalAmount = 0, payment = 0 } = req.body;
-
-    // Validate purchasedInventoryId
-    if (!purchasedInventoryId) {
+    // Log incoming request body
+    console.log('Received request to add customer:', req.body);
+  
+    const {
+        name,
+        email,
+        phone,
+        purchasedInventory, // Should be the product name
+        quantity = 1,
+        totalAmount = 0,
+        payment = 0
+    } = req.body;
+  
+    // Check if purchasedInventory is provided
+    if (!purchasedInventory) {
+        console.log('Error: Purchased Inventory ID is missing');
         return res.status(400).json({ message: 'Purchased Inventory ID is required' });
     }
-
+  
     try {
-        let costPricePerUnit = 0;
-        let salePricePerUnit = 0;
-        let totalCost = 0;
-        let totalSaleAmount = 0;
-
-        // Fetch product details using purchasedInventoryId
-        const product = await Product.findByPk(purchasedInventoryId);
+        // Find the product by name
+        console.log('Searching for product with name:', purchasedInventory);
+        const product = await Product.findOne({
+            where: { name: purchasedInventory }
+        });
+  
         if (!product) {
+            console.log('Error: Product not found for name:', purchasedInventory);
             return res.status(404).json({ message: 'Product not found' });
         }
-
-        // Perform calculations
-        costPricePerUnit = product.costPricePerUnit || 0;
-        salePricePerUnit = product.salePricePerUnit || 0;
-        totalCost = quantity * costPricePerUnit;
-        totalSaleAmount = quantity * salePricePerUnit;
-
+  
+        // Log product details for debugging
+        console.log('Product found:', product);
+  
+        // Calculate necessary values based on the product and customer details
+        const costPricePerUnit = product.costPricePerUnit || 0;
+        const salePricePerUnit = product.salePricePerUnit || 0;
+        const totalCost = quantity * costPricePerUnit;
+        const totalSaleAmount = quantity * salePricePerUnit;
         const balance = parseFloat(totalAmount) - parseFloat(payment);
-
+  
+        // Log calculated values
+        console.log('Calculated values:', {
+            costPricePerUnit,
+            salePricePerUnit,
+            quantity,
+            totalCost,
+            totalSaleAmount,
+            totalAmount,
+            payment,
+            balance,
+            isDebtor: balance > 0,
+            paymentStatus: balance <= 0 ? 'Paid' : 'Pending'
+        });
+  
+        // Create a new customer record
+        console.log('Creating new customer record...');
         const newCustomer = await Customer.create({
             name,
             email,
             phone,
-            purchasedInventoryId,
+            purchasedInventory: purchasedInventory, // Use the product name here
             quantityPurchased: parseInt(quantity, 10),
             costPricePerUnit,
             salePricePerUnit,
@@ -50,25 +78,23 @@ exports.addCustomer = async (req, res) => {
             isDebtor: balance > 0,
             paymentStatus: balance <= 0 ? 'Paid' : 'Pending',
         });
-
-        if (balance > 0) {
-            await sendEmail(
-                email,
-                'Reminder: Outstanding Balance',
-                `Dear ${name}, you have an outstanding balance of ${balance}. Please make the payment as soon as possible.`
-            );
-        } else {
-            await sendEmail(
-                email,
-                'Thank You for Your Purchase!',
-                `Dear ${name}, thank you for your purchase with UAS Motors. Your balance is now zero.`
-            );
-        }
-
+  
+        console.log('New customer created successfully:', newCustomer);
+  
+        // Send email based on balance
+        const emailSubject = balance > 0 ? 'Reminder: Outstanding Balance' : 'Thank You for Your Purchase!';
+        const emailBody = `Dear ${name}, ${balance > 0 ? `you have an outstanding balance of ${balance}.` : 'thank you for your purchase with UAS Motors. Your balance is now zero.'}`;
+        
+        console.log('Sending email to customer:', { email, subject: emailSubject, body: emailBody });
+        await sendEmail(email, emailSubject, emailBody);
+        console.log('Email sent successfully');
+  
+        // Respond with success
         res.status(201).json({ message: 'Customer added successfully', customer: newCustomer });
+  
     } catch (error) {
-        console.error('Error adding customer:', error);
-        res.status(500).json({ message: 'Error adding customer' });
+        console.log('Error occurred while adding customer:', error.message);
+        res.status(500).json({ message: 'Error adding customer', error: error.message });
     }
 };
 
@@ -90,7 +116,6 @@ exports.updateCustomer = async (req, res) => {
 
         // Update the values if a product is selected
         if (purchasedInventoryId) {
-            // Validate purchasedInventoryId
             const product = await Product.findByPk(purchasedInventoryId);
             if (!product) {
                 return res.status(404).json({ message: 'Product not found' });
@@ -127,7 +152,6 @@ exports.updateCustomer = async (req, res) => {
         res.status(500).json({ message: 'Error updating customer' });
     }
 };
-
 
 // Update payment for a customer
 exports.updateCustomerPayment = async (req, res) => {
@@ -207,7 +231,6 @@ exports.getCustomers = async (req, res) => {
         const customers = await Customer.findAll();
         res.status(200).json(customers);
     } catch (error) {
-        console.error('Error fetching customers:', error);
         res.status(500).json({ message: 'Error fetching customers' });
     }
 };

@@ -68,9 +68,6 @@ const Customer = sequelize.define('Customer', {
   timestamps: true,
 });
 
-Customer.associate = (models) => {
-  Customer.belongsTo(models.Product, { foreignKey: 'purchasedInventoryId' });
-};
 
 module.exports = Customer;
 []

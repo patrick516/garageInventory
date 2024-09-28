@@ -12,7 +12,7 @@ const CustomerForm = () => {
   const [inventoryList, setInventoryList] = useState([]);
   const [quantity, setQuantity] = useState('');
   const [costPricePerUnit, setCostPricePerUnit] = useState('');
-  const [salePricePerUnit, setSalePricePerUnit] = useState(''); // Add the missing salePricePerUnit state
+  const [salePricePerUnit, setSalePricePerUnit] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const [payment, setPayment] = useState('');
   const [balance, setBalance] = useState('');
@@ -45,42 +45,49 @@ const CustomerForm = () => {
     if (selectedItem) {
       setCostPricePerUnit(selectedItem.costPricePerUnit || 0);
       setSalePricePerUnit(selectedItem.salePricePerUnit || 0); // Set the sale price per unit correctly
+      // Automatically calculate total amount based on the selected item's sale price
       calculateTotalAmount(quantity, selectedItem.salePricePerUnit || 0);
     } else {
       // If selectedItem is not found, reset the values
       setCostPricePerUnit(0);
-      setSalePricePerUnit(0); // Reset salePricePerUnit
+      setSalePricePerUnit(0);
       setTotalAmount(0);
     }
   };
 
+  // Handle quantity change and ensure it doesn't exceed available stock
   const handleQuantityChange = (e) => {
     const qty = e.target.value;
     const selectedItem = inventoryList.find(item => item.name === purchasedInventory);
 
-    if (selectedItem && qty > selectedItem.quantity) {
-      toast.warn(`You can only sell up to ${selectedItem.quantity} units as it is the current available quantity.`, {
-        position: "top-center",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      setQuantity(selectedItem.quantity);
-      calculateTotalAmount(selectedItem.quantity, salePricePerUnit); // Use salePricePerUnit
-    } else {
-      setQuantity(qty);
-      calculateTotalAmount(qty, salePricePerUnit); // Use salePricePerUnit
+    // Check if selectedItem is available and validate quantity
+    if (selectedItem) {
+      if (qty > selectedItem.quantity) {
+        toast.warn(`You can only sell up to ${selectedItem.quantity} units as it is the current available quantity.`, {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setQuantity(selectedItem.quantity); // Reset quantity to available stock
+        calculateTotalAmount(selectedItem.quantity, salePricePerUnit); // Calculate total with max available stock
+      } else {
+        setQuantity(qty);
+        calculateTotalAmount(qty, salePricePerUnit); // Calculate total based on the input quantity
+      }
     }
   };
 
+  // Calculate total amount based on quantity and sale price
   const calculateTotalAmount = (qty, price) => {
     const total = (parseFloat(qty) || 0) * (parseFloat(price) || 0);
     setTotalAmount(total.toFixed(2));
   };
 
+  // Handle payment input change
   const handlePaymentChange = (e) => {
     const paymentValue = parseFloat(e.target.value) || 0;
     setPayment(paymentValue);
@@ -112,10 +119,10 @@ const CustomerForm = () => {
       name,
       email,
       phone,
-      purchasedInventory: purchasedInventory || '', // Ensure it's not undefined
+      purchasedInventory: purchasedInventory || '',
       quantity,
       costPricePerUnit: parseFloat(costPricePerUnit),
-      salePricePerUnit: parseFloat(salePricePerUnit), // Send salePricePerUnit
+      salePricePerUnit: parseFloat(salePricePerUnit),
       totalAmount: parseFloat(totalAmount),
       payment: parseFloat(payment),
       balance: parseFloat(balance),
@@ -136,6 +143,7 @@ const CustomerForm = () => {
     }
   };
 
+  // Reset form fields after submission
   const resetForm = () => {
     setName('');
     setEmail('');
@@ -143,7 +151,7 @@ const CustomerForm = () => {
     setPurchasedInventory('');
     setQuantity('');
     setCostPricePerUnit('');
-    setSalePricePerUnit(''); // Reset salePricePerUnit
+    setSalePricePerUnit('');
     setTotalAmount('');
     setPayment('');
     setBalance('');
@@ -217,10 +225,10 @@ const CustomerForm = () => {
           />
         </div>
         <div>
-          <label>Sale Price per Unit</label> {/* Corrected label */}
+          <label>Sale Price per Unit</label>
           <input 
             type="text" 
-            value={salePricePerUnit} // Corrected usage
+            value={salePricePerUnit}
             readOnly 
           />
         </div>
@@ -266,7 +274,7 @@ const CustomerForm = () => {
           />
         </div>
         <button type="submit" disabled={loading}>
-          {loading ? 'Processing...' : 'Add Customer'}
+          {loading ? 'Adding...' : 'Add Customer'}
         </button>
       </form>
       <ToastContainer />
