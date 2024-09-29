@@ -2,8 +2,11 @@
 
 const Employee = require('../models/employeeModel');
 
+
+
 // Add Employee
 exports.addEmployee = async (req, res) => {
+  console.log('Received POST request to add employee:', req.body);
   const { 
     name, 
     position, 
@@ -16,32 +19,31 @@ exports.addEmployee = async (req, res) => {
     expectedSalary 
   } = req.body;
 
-  // Validation for required fields
   if (!name || !position || !phoneNumber || !expectedWorkdays || !expectedSalary) {
     return res.status(400).json({ message: 'Required fields are missing' });
   }
 
   try {
-    // Create new employee entry
     const newEmployee = await Employee.create({
       name,
       position,
-      email: email || null, // Allow null if email is not provided
+      email: email || null,
       phoneNumber,
       areaOfResidence,
-      emergencyNumber: emergencyNumber || null, // Allow null for optional emergency number
+      emergencyNumber: emergencyNumber || null,
       dateJoined,
       expectedWorkdays,
       expectedSalary,
     });
 
-    // Respond with success
     res.status(201).json({ message: 'Employee added successfully', employee: newEmployee });
   } catch (error) {
-    console.error('Error adding employee:', error);
+    console.error('Error saving employee:', error.message);
     res.status(500).json({ message: 'Error adding employee', error });
   }
 };
+
+// Other controller methods (fetch, update, delete)...
 
 // Get Employee List
 exports.getEmployeeList = async (req, res) => {

@@ -78,8 +78,9 @@ const EmployeeList = () => {
         await axios.put(`http://localhost:3001/api/employees/${editingEmployeeId}`, formData);
         toast.success('Employee updated successfully!');
       } else {
-        await axios.post('http://localhost:3001/api/employees/add', formData);
+        await axios.post('http://localhost:3001/api/employees', formData);
         toast.success('Employee added successfully!');
+        
       }
 
       fetchEmployees();
