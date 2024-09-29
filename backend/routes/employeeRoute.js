@@ -3,6 +3,7 @@ const router = express.Router();
 const employeeController = require('../controllers/employeeController'); // Ensure the path is correct
 
 // Define routes
+
 router.post('/', employeeController.addEmployee); // Route to add a new employee
 router.get('/', employeeController.getEmployeeList); // Route to get all employees
 router.get('/:id', employeeController.getEmployeeById); // Route to get an employee by ID

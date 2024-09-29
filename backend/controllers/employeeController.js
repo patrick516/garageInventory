@@ -60,6 +60,7 @@ exports.getEmployeeList = async (req, res) => {
   }
 };
 
+
 // Get Employee by ID
 exports.getEmployeeById = async (req, res) => {
   const { id } = req.params;

@@ -92,7 +92,7 @@ const EmployeeList = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/employees/list');
+      const response = await axios.get('http://localhost:3001/api/employees'); // Correct this line
       if (Array.isArray(response.data)) {
         setEmployees(response.data);
       } else {
@@ -104,6 +104,7 @@ const EmployeeList = () => {
       toast.error('Failed to fetch employee list');
     }
   };
+  
 
   const resetForm = () => {
     setFormData({
