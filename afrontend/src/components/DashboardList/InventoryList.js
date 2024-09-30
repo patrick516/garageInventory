@@ -9,8 +9,8 @@ import AddInventory from './AddInventory'; // Import AddInventory component
 
 const InventoryList = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null); // State to track selected item for editing
-  const [isEditing, setIsEditing] = useState(false); // State to toggle between add/edit modes
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchInventory = async () => {
@@ -37,13 +37,13 @@ const InventoryList = () => {
   };
 
   const handleEdit = (item) => {
-    setSelectedItem(item); // Set the item to be edited
-    setIsEditing(true); // Switch to edit mode
+    setSelectedItem(item);
+    setIsEditing(true);
   };
 
   const handleCloseEdit = () => {
-    setIsEditing(false); // Close the edit form
-    setSelectedItem(null); // Clear selected item
+    setIsEditing(false);
+    setSelectedItem(null);
   };
 
   const handleUpdate = (updatedItem) => {
@@ -52,12 +52,43 @@ const InventoryList = () => {
         item.id === updatedItem.id ? updatedItem : item
       )
     );
-    handleCloseEdit(); // Close the edit form
+    handleCloseEdit();
   };
+
+  // Format currency function
+  const formatCurrency = (amount) => {
+    return `MK${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
+
+  // Calculate totals
+  const totalCosts = inventoryItems.reduce((acc, item) => {
+    const costPricePerUnit = Number(item.costPricePerUnit) || 0;
+    const quantity = Number(item.quantity) || 0;
+    const anyCostIncurred = Number(item.anyCostIncurred) || 0;
+    return acc + (costPricePerUnit * quantity + anyCostIncurred);
+  }, 0);
+
+  const totalSales = inventoryItems.reduce((acc, item) => {
+    const salePricePerUnit = Number(item.salePricePerUnit) || 0;
+    const quantity = Number(item.quantity) || 0;
+    return acc + (salePricePerUnit * quantity);
+  }, 0);
+
+  const profitOrLoss = totalSales - totalCosts;
 
   return (
     <div className="inventory-list-container">
       <h2>Inventory List</h2>
+
+      {/* Summary Section */}
+      <div className="summary">
+        <p>Total Costs (MK): {formatCurrency(totalCosts)}</p>
+        <p>Total Sales (MK): {formatCurrency(totalSales)}</p>
+        <p>
+          Profit/Loss (MK): {profitOrLoss > 0 ? '+' : ''}{formatCurrency(profitOrLoss)}
+        </p>
+      </div>
+
       {isEditing && (
         <AddInventory
           itemToEdit={selectedItem}
@@ -65,6 +96,7 @@ const InventoryList = () => {
           onUpdate={handleUpdate}
         />
       )}
+
       {inventoryItems.length > 0 ? (
         <table className="inventory-table">
           <thead>
@@ -72,28 +104,33 @@ const InventoryList = () => {
               <th>#</th>
               <th>Name</th>
               <th>Brand</th>
-              <th>Quantityy</th>
-              <th>Cost/Unit<br></br>MK</th>
-              <th>Total<br></br>MK</th>
-              <th>Sales <br></br>MK</th> {}
+              <th>Quantity</th>
+              <th>Cost/Unit (MK)</th>
+              <th>Total Costs (MK)</th>
+              <th>Sales/Unit (MK)</th>
+              <th>Total Sales (MK)</th>
               <th>Date & Time Recorded</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {inventoryItems.map((item, index) => {
-              const purchasedQuantity = item.purchasedQuantity || 0; // Use the purchased quantity
-              const calculatedSales = purchasedQuantity * item.salePricePerUnit; // Calculate sales based on purchase quantity
+              const costPricePerUnit = Number(item.costPricePerUnit) || 0;
+              const quantity = Number(item.quantity) || 0;
+              const totalCosts = (costPricePerUnit * quantity) + (Number(item.anyCostIncurred) || 0);
+              const salePricePerUnit = Number(item.salePricePerUnit) || 0;
+              const totalSales = salePricePerUnit * quantity;
 
               return (
                 <tr key={item.id}>
                   <td>{index + 1}</td>
                   <td>{item.name}</td>
                   <td>{item.brand}</td>
-                  <td>{item.quantity}</td> {/* Original quantity in stock */}
-                  <td>{item.costPerUnit}</td>
-                  <td>{item.totalCosts}</td>
-                  <td>{calculatedSales}</td> {/* Display sales based on the customer's purchase */}
+                  <td>{quantity}</td>
+                  <td>{formatCurrency(costPricePerUnit)}</td>
+                  <td>{formatCurrency(totalCosts)}</td>
+                  <td>{formatCurrency(salePricePerUnit)}</td>
+                  <td>{formatCurrency(totalSales)}</td>
                   <td>{new Date(item.createdAt).toLocaleString()}</td>
                   <td className="item-actions">
                     <FontAwesomeIcon
@@ -110,10 +147,10 @@ const InventoryList = () => {
                     />
                   </td>
                 </tr>
-               );
-             })}
+              );
+            })}
           </tbody>
-          </table>
+        </table>
       ) : (
         <div className="no-items">No inventory items found</div>
       )}
