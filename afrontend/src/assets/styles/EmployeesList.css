@@ -44,7 +44,7 @@
   border: 1px solid #ccc; /* Border style */
   border-radius: 4px; /* Rounded corners */
   margin-bottom: 15px; /* Space between inputs */
-  width: 100%; /* Full width */
+  width: 95%; /* Full width */
 }
 
 /* Error message styles */
@@ -130,10 +130,6 @@
   color: #999; /* Light gray color */
   font-style: italic; /* Italicize text */
 }
-
-
-
-
 
 
 

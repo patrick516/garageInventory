@@ -6,7 +6,7 @@ exports.addInventory = async (req, res) => {
     name,
     brand,
     quantity,
-    costPerUnit,
+    costPricePerUnit,
     anyCostIncurred,
     descriptionOfCost,
     totalCosts,
@@ -19,7 +19,7 @@ exports.addInventory = async (req, res) => {
       name,
       brand,
       quantity,
-      costPerUnit,
+      costPricePerUnit,
       anyCostIncurred,
       descriptionOfCost,
       totalCosts,
@@ -74,7 +74,7 @@ exports.updateInventory = async (req, res) => {
     name,
     brand,
     quantity,
-    costPerUnit,
+    costPricePerUnit,
     anyCostIncurred,
     descriptionOfCost,
     totalCosts,
@@ -93,7 +93,7 @@ exports.updateInventory = async (req, res) => {
     product.name = name || product.name;
     product.brand = brand || product.brand;
     product.quantity = quantity || product.quantity;
-    product.costPerUnit = costPerUnit || product.costPerUnit;
+    product.costPricePerUnit = costPerUnit || product.costPricePerUnit;
     product.anyCostIncurred = anyCostIncurred || product.anyCostIncurred;
     product.descriptionOfCost = descriptionOfCost || product.descriptionOfCost;
     product.totalCosts = totalCosts || product.totalCosts;

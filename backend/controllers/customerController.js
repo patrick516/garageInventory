@@ -5,68 +5,43 @@ const sendEmail = require('../services/mailer');
 
 // Add a new customer
 exports.addCustomer = async (req, res) => {
-    // Log incoming request body
     console.log('Received request to add customer:', req.body);
-  
+
     const {
         name,
         email,
         phone,
-        purchasedInventory, // Should be the product name
+        purchasedInventory,
         quantity = 1,
         totalAmount = 0,
         payment = 0
     } = req.body;
-  
-    // Check if purchasedInventory is provided
+
     if (!purchasedInventory) {
-        console.log('Error: Purchased Inventory ID is missing');
         return res.status(400).json({ message: 'Purchased Inventory ID is required' });
     }
-  
+
     try {
-        // Find the product by name
-        console.log('Searching for product with name:', purchasedInventory);
         const product = await Product.findOne({
             where: { name: purchasedInventory }
         });
-  
+
         if (!product) {
-            console.log('Error: Product not found for name:', purchasedInventory);
             return res.status(404).json({ message: 'Product not found' });
         }
-  
-        // Log product details for debugging
-        console.log('Product found:', product);
-  
-        // Calculate necessary values based on the product and customer details
+
         const costPricePerUnit = product.costPricePerUnit || 0;
         const salePricePerUnit = product.salePricePerUnit || 0;
         const totalCost = quantity * costPricePerUnit;
         const totalSaleAmount = quantity * salePricePerUnit;
         const balance = parseFloat(totalAmount) - parseFloat(payment);
-  
-        // Log calculated values
-        console.log('Calculated values:', {
-            costPricePerUnit,
-            salePricePerUnit,
-            quantity,
-            totalCost,
-            totalSaleAmount,
-            totalAmount,
-            payment,
-            balance,
-            isDebtor: balance > 0,
-            paymentStatus: balance <= 0 ? 'Paid' : 'Pending'
-        });
-  
+
         // Create a new customer record
-        console.log('Creating new customer record...');
         const newCustomer = await Customer.create({
             name,
             email,
             phone,
-            purchasedInventory: purchasedInventory, // Use the product name here
+            purchasedInventory: purchasedInventory,
             quantityPurchased: parseInt(quantity, 10),
             costPricePerUnit,
             salePricePerUnit,
@@ -77,23 +52,17 @@ exports.addCustomer = async (req, res) => {
             balance,
             isDebtor: balance > 0,
             paymentStatus: balance <= 0 ? 'Paid' : 'Pending',
+            lastEmailSent: balance <= 0 ? new Date() : null, // Set lastEmailSent for fully paid customers
         });
-  
-        console.log('New customer created successfully:', newCustomer);
-  
+
         // Send email based on balance
         const emailSubject = balance > 0 ? 'Reminder: Outstanding Balance' : 'Thank You for Your Purchase!';
         const emailBody = `Dear ${name}, ${balance > 0 ? `you have an outstanding balance of ${balance}.` : 'thank you for your purchase with UAS Motors. Your balance is now zero.'}`;
         
-        console.log('Sending email to customer:', { email, subject: emailSubject, body: emailBody });
         await sendEmail(email, emailSubject, emailBody);
-        console.log('Email sent successfully');
-  
-        // Respond with success
+
         res.status(201).json({ message: 'Customer added successfully', customer: newCustomer });
-  
     } catch (error) {
-        console.log('Error occurred while adding customer:', error.message);
         res.status(500).json({ message: 'Error adding customer', error: error.message });
     }
 };
@@ -178,11 +147,19 @@ exports.updateCustomerPayment = async (req, res) => {
         customer.balance = newBalance;
         customer.paymentStatus = newBalance <= 0 ? 'Paid' : 'Pending';
 
+        // Update lastEmailSent if the customer fully pays off the balance
+        if (newBalance === 0) {
+            customer.lastEmailSent = new Date();
+            const emailSubject = 'Thank You for Your Payment!';
+            const emailBody = `Dear ${customer.name}, thank you for completing your payment. Your balance is now zero.`;
+
+            await sendEmail(customer.email, emailSubject, emailBody);
+        }
+
         await customer.save();
 
         res.status(200).json({ message: 'Payment updated successfully', customer });
     } catch (error) {
-        console.error('Error updating payment:', error);
         res.status(500).json({ message: 'Error updating payment', error });
     }
 };
@@ -249,5 +226,37 @@ exports.getCustomerById = async (req, res) => {
     } catch (error) {
         console.error('Error fetching customer:', error);
         res.status(500).json({ message: 'Error fetching customer' });
+    }
+};
+exports.sendReminderEmailsToDebtors = async () => {
+    try {
+        const debtors = await Customer.findAll({
+            where: { isDebtor: true },
+        });
+
+        const currentDate = new Date();
+
+        for (const debtor of debtors) {
+            const lastEmailSent = debtor.lastEmailSent;
+            const daysSinceLastEmail = lastEmailSent
+                ? Math.floor((currentDate - new Date(lastEmailSent)) / (1000 * 60 * 60 * 24))
+                : null;
+
+            // Send a reminder only if no email has been sent in the past 5 days
+            if (!lastEmailSent || daysSinceLastEmail >= 5) {
+                const emailSubject = 'Reminder: Outstanding Balance';
+                const emailBody = `Dear ${debtor.name}, you have an outstanding balance of ${debtor.balance}. Please make the payment at your earliest convenience.`;
+
+                await sendEmail(debtor.email, emailSubject, emailBody);
+
+                // Update lastEmailSent field
+                debtor.lastEmailSent = currentDate;
+                await debtor.save();
+            }
+        }
+
+        console.log('Reminder emails sent to debtors.');
+    } catch (error) {
+        console.error('Error sending reminder emails:', error);
     }
 };

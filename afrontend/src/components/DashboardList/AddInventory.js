@@ -8,7 +8,7 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
     name: '',
     brand: '',
     quantity: '',
-    costPerUnit: '',
+    costPricePerUnit: '',
     anyCostIncurred: '',
     descriptionOfCost: '',
     totalCosts: '',
@@ -22,7 +22,7 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
         name: itemToEdit.name || '',
         brand: itemToEdit.brand || '',
         quantity: itemToEdit.quantity || '',
-        costPerUnit: itemToEdit.costPerUnit || '',
+        costPricePerUnit: itemToEdit.costPricePerUnit || '',
         anyCostIncurred: itemToEdit.anyCostIncurred || '',
         descriptionOfCost: itemToEdit.descriptionOfCost || '',
         totalCosts: itemToEdit.totalCosts || '',
@@ -35,7 +35,7 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
         name: '',
         brand: '',
         quantity: '',
-        costPerUnit: '',
+        costPricePerUnit: '',
         anyCostIncurred: '',
         descriptionOfCost: '',
         totalCosts: '',
@@ -54,12 +54,12 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
       };
 
       // Calculate Total Costs
-      if (name === 'quantity' || name === 'costPerUnit' || name === 'anyCostIncurred') {
+      if (name === 'quantity' || name === 'costPricePerUnit' || name === 'anyCostIncurred') {
         const quantity = parseFloat(updatedData.quantity) || 0;
-        const costPerUnit = parseFloat(updatedData.costPerUnit) || 0;
+        const costPricePerUnit = parseFloat(updatedData.costPricePerUnit) || 0;
         const anyCostIncurred = parseFloat(updatedData.anyCostIncurred) || 0;
 
-        const totalCosts = (quantity * costPerUnit) + anyCostIncurred;
+        const totalCosts = (quantity * costPricePerUnit) + anyCostIncurred;
         updatedData.totalCosts = totalCosts.toFixed(2);
       }
 
@@ -91,7 +91,7 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
           name: '',
           brand: '',
           quantity: '',
-          costPerUnit: '',
+          costPricePerUnit: '',
           anyCostIncurred: '',
           descriptionOfCost: '',
           totalCosts: '',
@@ -144,12 +144,12 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="costPerUnit">Cost per Unit</label>
+          <label htmlFor="costPricePerUnit">cost Price Per Unit</label>
           <input
             type="number"
-            id="costPerUnit"
-            name="costPerUnit"
-            value={formData.costPerUnit}
+            id="costPricePerUnit"
+            name="costPricePerUnit"
+            value={formData.costPricePerUnit}
             onChange={handleChange}
             required
           />

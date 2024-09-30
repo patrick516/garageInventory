@@ -19,7 +19,7 @@ const Customer = sequelize.define('Customer', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  purchasedInventoryId: { // Ensure this field name matches
+  purchasedInventoryId: {
     type: DataTypes.INTEGER,
     allowNull: true, // or false depending on your requirement
   },
@@ -63,11 +63,17 @@ const Customer = sequelize.define('Customer', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  lastEmailSent: {
+    type: DataTypes.DATE,
+    allowNull: true, // Track when the last email was sent, default to null
+  },
 }, {
   tableName: 'Customers', // Ensure this matches your table name
   timestamps: true,
 });
 
+Customer.associate = (models) => {
+  Customer.belongsTo(models.Product, { foreignKey: 'purchasedInventoryId' });
+};
 
 module.exports = Customer;
-[]
