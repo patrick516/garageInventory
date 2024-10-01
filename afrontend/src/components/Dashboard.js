@@ -35,7 +35,7 @@ const Dashboard = () => {
       window.logoutTimer = setTimeout(() => {
         authService.logout();
         navigate('/login');
-      }, 30000);
+      }, 3000000);
     };
 
     window.addEventListener('mousemove', handleUserActivity);

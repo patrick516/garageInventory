@@ -13,6 +13,8 @@ h2 {
 .summary {
   text-align: center; /* Center the summary text */
   margin-bottom: 20px; /* Add margin below summary */
+
+  font-weight: bold; 
 }
 .inventory-table {
   width: 100%;

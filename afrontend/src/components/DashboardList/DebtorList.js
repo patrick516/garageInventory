@@ -10,7 +10,8 @@ const DebtorList = () => {
   const [totalPending, setTotalPending] = useState(0);
   const [paymentInputs, setPaymentInputs] = useState({});
   const [popupVisible, setPopupVisible] = useState(null);
-  const [fullPaymentMessage, setFullPaymentMessage] = useState(''); // State for full payment message
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteCustomerId, setDeleteCustomerId] = useState(null);
 
   useEffect(() => {
     const fetchDebtors = async () => {
@@ -57,6 +58,7 @@ const DebtorList = () => {
       [id]: enteredAmount
     });
 
+    // Show popup if balance remains
     if (remainingBalance >= 0) {
       setPopupVisible(id);
     } else {
@@ -96,17 +98,11 @@ const DebtorList = () => {
       const debtorWithFullPayment = updatedDebtors.find(debtor => debtor.id === id && debtor.balance === 0);
 
       if (debtorWithFullPayment) {
-        setFullPaymentMessage(`${debtorWithFullPayment.name} has paid off their debt in full. They will be removed in 5 seconds.`);
-        setTimeout(() => {
-          const remainingDebtors = updatedDebtors.filter(debtor => debtor.balance > 0);
-          setDebtors(remainingDebtors);
-          calculateTotals(remainingDebtors);
-          setFullPaymentMessage(''); // Clear the message after removal
-        }, 5000);
-      } else {
-        setDebtors(updatedDebtors);
-        calculateTotals(updatedDebtors);
+        toast.success(`${debtorWithFullPayment.name} has paid off their debt in full.`);
       }
+
+      setDebtors(updatedDebtors);
+      calculateTotals(updatedDebtors);
 
       toast.success("Payment processed successfully.");
       setPaymentInputs({ ...paymentInputs, [id]: '' });
@@ -114,6 +110,32 @@ const DebtorList = () => {
       console.error('Error processing payment: ', error);
       toast.error("Payment failed. Please try again.");
     }
+  };
+
+  const handleDeleteClick = (id) => {
+    setDeleteCustomerId(id);
+    setShowDeleteModal(true); // Show custom modal
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await axios.delete(`http://localhost:3001/api/customers/${deleteCustomerId}`);
+      const updatedDebtors = debtors.filter(debtor => debtor.id !== deleteCustomerId);
+      setDebtors(updatedDebtors);
+      calculateTotals(updatedDebtors);
+      toast.success('Customer deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      toast.error('Failed to delete customer.');
+    } finally {
+      setShowDeleteModal(false); // Close the modal after action
+      setDeleteCustomerId(null); // Clear the id
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setDeleteCustomerId(null);
   };
 
   return (
@@ -124,12 +146,6 @@ const DebtorList = () => {
         <p>Total Amount Paid Previously: <strong>{formatCurrency(totalPaid)}</strong></p>
         <p>Total Remaining Balance (Pending): <strong>{formatCurrency(totalPending)}</strong></p>
       </div>
-
-      {fullPaymentMessage && (
-        <div className="full-payment-popup">
-          {fullPaymentMessage}
-        </div>
-      )}
 
       <table>
         <thead>
@@ -156,14 +172,18 @@ const DebtorList = () => {
                 <td>{formatCurrency(debtor.payment || 0)}</td>
                 <td>{formatCurrency(debtor.balance || 0)}</td>
                 <td>
-                  <input
-                    type="number"
-                    placeholder="Enter amount"
-                    value={paymentInputs[debtor.id] || ''}
-                    onChange={(e) => handleInputChange(debtor.id, e.target.value)}
-                    onBlur={handleBlur}
-                    onFocus={() => handleInputChange(debtor.id, paymentInputs[debtor.id] || 0)}
-                  />
+                  {debtor.balance > 0 ? (
+                    <input
+                      type="number"
+                      placeholder="Enter amount"
+                      value={paymentInputs[debtor.id] || ''}
+                      onChange={(e) => handleInputChange(debtor.id, e.target.value)}
+                      onBlur={handleBlur}
+                      onFocus={() => handleInputChange(debtor.id, paymentInputs[debtor.id] || 0)}
+                    />
+                  ) : (
+                    <span>Paid in Full</span>
+                  )}
                   {popupVisible === debtor.id && (
                     <div className="popup">
                       Remaining Balance: {formatCurrency((debtor.balance || 0) - (paymentInputs[debtor.id] || 0))}
@@ -172,13 +192,29 @@ const DebtorList = () => {
                 </td>
                 <td>{debtor.paymentStatus}</td>
                 <td>
-                  <button onClick={() => handlePayNow(debtor.id)}>Pay</button>
+                  {debtor.balance > 0 ? (
+                    <button onClick={() => handlePayNow(debtor.id)}>Pay</button>
+                  ) : (
+                    <button onClick={() => handleDeleteClick(debtor.id)}>Delete</button>
+                  )}
                 </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Are you sure you want to delete this customer?</h3>
+            <button onClick={handleDeleteConfirm} className="confirm-btn">Yes, Delete</button>
+            <button onClick={handleDeleteCancel} className="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      )}
+
       <ToastContainer />
     </div>
   );

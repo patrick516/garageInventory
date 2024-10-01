@@ -65,3 +65,34 @@ button:hover {
   z-index: 1000; /* Ensure it appears above other elements */
 }
 
+
+
+
+/* Modal styling */
+.modal {
+  position: fixed;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for modal width and height */
+  z-index: 1000; /* Make sure it stays above everything */
+  background-color: rgba(0, 0, 0, 0.6); /* Dark background overlay */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-btn,
+.cancel-btn {
+  margin: 10px;
+}
