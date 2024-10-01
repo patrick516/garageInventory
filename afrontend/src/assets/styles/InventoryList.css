@@ -1,17 +1,34 @@
 /* src/assets/styles/InventoryList.css */
 .inventory-list-container {
   padding: 20px;
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack items vertically */
 }
 
 h2 {
   margin-bottom: 20px;
+  text-align: center; /* Center the heading */
 }
 
+.summary {
+  text-align: center; /* Center the summary text */
+  margin-bottom: 20px; /* Add margin below summary */
+}
 .inventory-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
+  margin-left: 2; /* Move table to the left */
 }
+.inventory-list-wrapper {
+  width: 100%; /* Adjust the width of the table wrapper */
+  max-width: 1150px; /* Limit the maximum width */
+  overflow-x: auto; /* Enable horizontal scrolling if needed */
+  margin-left: 0; /* Align to the left */
+  margin-right: auto; /* Center if necessary */
+}
+
+
 
 .inventory-table th,
 .inventory-table td {
@@ -27,6 +44,10 @@ h2 {
 
 .inventory-table td {
   vertical-align: top;
+  max-width: 150px; /* Adjust max-width for table cells */
+  overflow: hidden; /* Prevent overflow */
+  text-overflow: ellipsis; /* Show ellipsis for overflowed text */
+  white-space: nowrap; /* Prevent text from wrapping */
 }
 
 .item-actions {
@@ -67,6 +88,7 @@ h2 {
 @media (max-width: 768px) {
   .inventory-table {
     font-size: 14px; /* Adjust font size for smaller screens */
+    overflow-x: auto; /* Enable horizontal scrolling for smaller screens */
   }
 
   .item-actions {

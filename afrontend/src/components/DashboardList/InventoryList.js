@@ -79,7 +79,7 @@ const InventoryList = () => {
   return (
     <div className="inventory-list-container">
       <h2>Inventory List</h2>
-
+  
       {/* Summary Section */}
       <div className="summary">
         <p>Total Costs (MK): {formatCurrency(totalCosts)}</p>
@@ -88,7 +88,7 @@ const InventoryList = () => {
           Profit/Loss (MK): {profitOrLoss > 0 ? '+' : ''}{formatCurrency(profitOrLoss)}
         </p>
       </div>
-
+  
       {isEditing && (
         <AddInventory
           itemToEdit={selectedItem}
@@ -96,66 +96,69 @@ const InventoryList = () => {
           onUpdate={handleUpdate}
         />
       )}
-
+  
       {inventoryItems.length > 0 ? (
-        <table className="inventory-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Brand</th>
-              <th>Quantity</th>
-              <th>Cost/Unit (MK)</th>
-              <th>Total Costs (MK)</th>
-              <th>Sales/Unit (MK)</th>
-              <th>Total Sales (MK)</th>
-              <th>Date & Time Recorded</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {inventoryItems.map((item, index) => {
-              const costPricePerUnit = Number(item.costPricePerUnit) || 0;
-              const quantity = Number(item.quantity) || 0;
-              const totalCosts = (costPricePerUnit * quantity) + (Number(item.anyCostIncurred) || 0);
-              const salePricePerUnit = Number(item.salePricePerUnit) || 0;
-              const totalSales = salePricePerUnit * quantity;
-
-              return (
-                <tr key={item.id}>
-                  <td>{index + 1}</td>
-                  <td>{item.name}</td>
-                  <td>{item.brand}</td>
-                  <td>{quantity}</td>
-                  <td>{formatCurrency(costPricePerUnit)}</td>
-                  <td>{formatCurrency(totalCosts)}</td>
-                  <td>{formatCurrency(salePricePerUnit)}</td>
-                  <td>{formatCurrency(totalSales)}</td>
-                  <td>{new Date(item.createdAt).toLocaleString()}</td>
-                  <td className="item-actions">
-                    <FontAwesomeIcon
-                      icon={faPenToSquare}
-                      className="edit-icon"
-                      title="Edit"
-                      onClick={() => handleEdit(item)}
-                    />
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      className="delete-icon"
-                      title="Delete"
-                      onClick={() => handleDelete(item.id)}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="inventory-list-wrapper"> {/* New wrapper div for styling */}
+          <table className="inventory-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Quantity</th>
+                <th>Cost/Unit (MK)</th>
+                <th>Total Costs (MK)</th>
+                <th>Sales/Unit (MK)</th>
+                <th>Total Sales (MK)</th>
+                <th>Date & Time Recorded</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inventoryItems.map((item, index) => {
+                const costPricePerUnit = Number(item.costPricePerUnit) || 0;
+                const quantity = Number(item.quantity) || 0;
+                const totalCosts = (costPricePerUnit * quantity) + (Number(item.anyCostIncurred) || 0);
+                const salePricePerUnit = Number(item.salePricePerUnit) || 0;
+                const totalSales = salePricePerUnit * quantity;
+  
+                return (
+                  <tr key={item.id}>
+                    <td>{index + 1}</td>
+                    <td>{item.name}</td>
+                    <td>{item.brand}</td>
+                    <td>{quantity}</td>
+                    <td>{formatCurrency(costPricePerUnit)}</td>
+                    <td>{formatCurrency(totalCosts)}</td>
+                    <td>{formatCurrency(salePricePerUnit)}</td>
+                    <td>{formatCurrency(totalSales)}</td>
+                    <td>{new Date(item.createdAt).toLocaleString()}</td>
+                    <td className="item-actions">
+                      <FontAwesomeIcon
+                        icon={faPenToSquare}
+                        className="edit-icon"
+                        title="Edit"
+                        onClick={() => handleEdit(item)}
+                      />
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        className="delete-icon"
+                        title="Delete"
+                        onClick={() => handleDelete(item.id)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div> // Close the wrapper div here
       ) : (
         <div className="no-items">No inventory items found</div>
       )}
     </div>
   );
-};
-
-export default InventoryList;
+  };
+  
+  export default InventoryList;
+  
