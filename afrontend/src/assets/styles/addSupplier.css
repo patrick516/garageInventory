@@ -1,0 +1,36 @@
+.add-supplier-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-supplier-modal h2 {
+    margin-bottom: 20px;
+  }
+  
+  .add-supplier-modal form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-supplier-modal input {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .add-supplier-modal button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .add-supplier-modal button:hover {
+    background-color: #0056b3;
+  }
+  

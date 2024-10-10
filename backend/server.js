@@ -10,6 +10,8 @@ const sendReminderEmails = require('./services/reminderScheduler'); // Import th
 require('dotenv').config(); // Load environment variables
 const db = require('./config/tests'); // Import db from index.js (models)
 
+const WebSocket = require('ws'); // Import the WebSocket library
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -27,8 +29,27 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/employees', employeeRoutes); 
 app.use('/api/salaries', salaryRoutes); // Use salary routes
 
+// WebSocket setup
+const wss = new WebSocket.Server({ port: 3002 }); // Create a WebSocket server on port 8080
 
-//app.use('/api/sales', salesRoutes);
+wss.on('connection', (ws) => {
+  console.log('New client connected');
+
+  // Listen for messages from the client
+  ws.on('message', (message) => {
+    console.log(`Received: ${message}`);
+    // Handle the barcode message or any other functionality here
+
+    // Send a response back to the client (optional)
+    ws.send(`Beep! Barcode scanned: ${message}`);
+  });
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
+
+console.log('WebSocket server is running on ws://localhost:3002'); // Log the WebSocket server URL
 
 // Error handling middleware
 app.use((err, req, res, next) => {

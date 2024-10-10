@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Chart, ArcElement, Tooltip, Legend, Title, BarElement, CategoryScale, LinearScale, LineElement, PointElement, RadarController, RadialLinearScale } from 'chart.js';
-import { Pie, Bar, Line, Radar } from 'react-chartjs-2';
+import { Chart, BarElement, ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, LineElement, PointElement, RadarController, RadialLinearScale } from 'chart.js';
+import { Bar, Pie, Line, Radar } from 'react-chartjs-2';
 import './DashboardList.css';
 import axios from 'axios'; // Import axios for fetching inventory data
 
@@ -20,12 +20,12 @@ Chart.register(
 );
 
 const AdminDashboard = () => {
-  // State to hold totals
   const [totalCosts, setTotalCosts] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [profitOrLoss, setProfitOrLoss] = useState(0);
+  const [inventoryData, setInventoryData] = useState([]);
 
-  // Fetch inventory data to calculate totals
+  // Fetch inventory data to calculate totals and inventory metrics
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
@@ -48,10 +48,12 @@ const AdminDashboard = () => {
 
         const profit = sales - costs;
 
-        // Set state values
         setTotalCosts(costs);
         setTotalSales(sales);
         setProfitOrLoss(profit);
+
+        // Set inventory data for bar charts
+        setInventoryData(inventoryItems);
       } catch (error) {
         console.error('Error fetching inventory data:', error);
       }
@@ -60,7 +62,31 @@ const AdminDashboard = () => {
     fetchInventoryData();
   }, []);
 
-  // Update the pie chart data with totals
+  // Prepare the data for stacked bar chart (Total and Remaining Quantity)
+  const barData = {
+    labels: inventoryData.map(item => item.name), // Item names as labels
+    datasets: [
+      {
+        label: 'Total Quantity',
+        data: inventoryData.map(item => Number(item.quantity) || 0), // Total quantity (purchased)
+        backgroundColor: 'rgba(75, 192, 192, 0.6)', // Parent bar color
+        stack: 'Stack 0',
+      },
+      {
+        label: 'Remaining Quantity',
+        data: inventoryData.map(item => {
+          const quantity = Number(item.quantity) || 0;
+          const sales = Number(item.sales) || 0;
+          const remaining = Math.max(0, quantity - sales); // Ensure no negative values
+          return remaining;
+        }),
+        backgroundColor: 'rgba(255, 159, 64, 0.6)', // Child bar color (remaining quantity)
+        stack: 'Stack 0',
+      },
+    ],
+  };
+
+  // Prepare data for pie chart (Costs, Sales, Profit)
   const pieData = {
     labels: ['Total Costs', 'Total Sales', 'Profit'],
     datasets: [
@@ -77,24 +103,13 @@ const AdminDashboard = () => {
     ],
   };
 
-  // Mock data for other charts (replace with your actual data)
-  const barData = {
-    labels: ['January', 'February', 'March', 'April', 'May'],
-    datasets: [
-      {
-        label: 'Sales',
-        data: [12, 19, 3, 5, 2],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      },
-    ],
-  };
-
+  // Line chart data (for future profitability trends)
   const lineData = {
-    labels: ['January', 'February', 'March', 'April', 'May'],
+    labels: ['January', 'February', 'March', 'April', 'May'], // Placeholder for now
     datasets: [
       {
         label: 'Profit',
-        data: [2, 3, 20, 5, 1],
+        data: [2, 3, 20, 5, 1], // Placeholder for now
         fill: false,
         backgroundColor: 'rgba(75, 192, 192, 1)',
         borderColor: 'rgba(75, 192, 192, 1)',
@@ -102,12 +117,13 @@ const AdminDashboard = () => {
     ],
   };
 
+  // Radar chart data (comparison between metrics)
   const radarData = {
     labels: ['Sales', 'Costs', 'Profit', 'Inventory'],
     datasets: [
       {
         label: '2024',
-        data: [20, 10, 15, 30],
+        data: [20, 10, 15, 30], // Placeholder for now
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -115,38 +131,67 @@ const AdminDashboard = () => {
     ],
   };
 
-  // Options for charts
+  // Chart options
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+  };
+
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true, // Show legend for Total and Remaining quantity
+      },
+      title: {
+        display: true,
+        text: 'Inventory Total vs Remaining Quantity', // Title for the chart
+      },
+    },
+    scales: {
+      x: {
+        stacked: true, // Enable stacking on the x-axis (vertical bars)
+        title: {
+          display: true,
+          text: 'Inventory Items', // Label for x-axis
+        },
+      },
+      y: {
+        stacked: true, // Enable stacking on the y-axis
+        title: {
+          display: true,
+          text: 'Quantity', // Label for y-axis
+        },
+      },
+    },
   };
 
   return (
     <div className="admin-dashboard">
       <div className="dashboard-grid">
         <div className="grid-item">
-          <h3>INVENTORY SUMMARY</h3>
+          <h3>INVENTORY RECORDS SUMMARY</h3>
           <div className="chart-container">
             <Pie data={pieData} options={options} />
           </div>
         </div>
 
         <div className="grid-item">
-          <h3>Bar Chart</h3>
+          <h3>Inventory Total vs Remaining Quantity</h3>
           <div className="chart-container">
-            <Bar data={barData} options={options} />
+            <Bar data={barData} options={barOptions} />
           </div>
         </div>
 
         <div className="grid-item">
-          <h3>Line Chart</h3>
+          <h3>Profit Trends (Line Chart)</h3>
           <div className="chart-container">
             <Line data={lineData} options={options} />
           </div>
         </div>
 
         <div className="grid-item">
-          <h3>Radar Chart</h3>
+          <h3>Metrics Overview (Radar Chart)</h3>
           <div className="chart-container">
             <Radar data={radarData} options={options} />
           </div>

@@ -14,7 +14,33 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
     totalCosts: '',
     salePricePerUnit: '',
     totalCostOfSales: '',
+    barcode: '',  // Changed from inventoryCode to barcode
   });
+
+  // Function to handle camera access
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const videoElement = document.getElementById('camera-feed');
+      videoElement.srcObject = stream;
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      toast.error('Error accessing camera');
+    }
+  };
+
+  // Play sound on scan
+  const playSound = () => {
+    const audio = new Audio('/path/to/your/beep-sound.mp3'); // Add your sound file here
+    audio.play();
+  };
+
+  // Function to trigger vibration (if supported)
+  const triggerVibration = () => {
+    if (navigator.vibrate) {
+      navigator.vibrate(200); // Vibrate for 200 milliseconds
+    }
+  };
 
   useEffect(() => {
     if (itemToEdit) {
@@ -28,6 +54,7 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
         totalCosts: itemToEdit.totalCosts || '',
         salePricePerUnit: itemToEdit.salePricePerUnit || '',
         totalCostOfSales: itemToEdit.totalCostOfSales || '',
+        barcode: itemToEdit.barcode || '', // Changed from inventoryCode to barcode
       });
     } else {
       // Reset formData if there's no item to edit
@@ -41,9 +68,34 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
         totalCosts: '',
         salePricePerUnit: '',
         totalCostOfSales: '',
+        barcode: '', // Reset the barcode as well
       });
     }
+
+    // Start the camera when the form opens
+    startCamera();
+
+    // Setup WebSocket to listen for barcode scans
+    const socket = new WebSocket('ws://localhost:3002'); // Replace with your actual WebSocket URL
+
+    socket.onmessage = function (event) {
+      const barcodeData = event.data; // This is the scanned barcode data
+      fillInventoryForm(barcodeData);
+    };
+
+    return () => {
+      socket.close(); // Cleanup on component unmount
+    };
   }, [itemToEdit]);
+
+  const fillInventoryForm = (barcodeData) => {
+    setFormData(prevState => ({
+      ...prevState,
+      barcode: barcodeData, // Changed from inventoryCode to barcode
+    }));
+    playSound(); // Play beep sound on scan
+    triggerVibration(); // Trigger vibration on scan
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,6 +149,7 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
           totalCosts: '',
           salePricePerUnit: '',
           totalCostOfSales: '',
+          barcode: '', // Reset the barcode for new entries
         });
       }
       onClose();
@@ -110,6 +163,17 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
     <div className="add-inventory-container">
       <h2>{itemToEdit ? 'Edit Inventory' : 'Add Inventory'}</h2>
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="barcode">Barcode</label> {/* Changed label from Inventory Code to Barcode */}
+          <input
+            type="text"
+            id="barcode"
+            name="barcode" // Changed name from inventoryCode to barcode
+            value={formData.barcode}
+            onChange={handleChange}
+            placeholder="Scan barcode here"
+          />
+        </div>
         <div className="form-group">
           <label htmlFor="name">Name</label>
           <input
@@ -144,7 +208,7 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="costPricePerUnit">cost Price Per Unit</label>
+          <label htmlFor="costPricePerUnit">Cost Price Per Unit</label>
           <input
             type="number"
             id="costPricePerUnit"
@@ -204,10 +268,9 @@ const AddInventory = ({ itemToEdit, onClose, onUpdate }) => {
             readOnly
           />
         </div>
-        <div className="form-group">
-          <button type="submit">{itemToEdit ? 'Update Item' : 'Add Item'}</button>
-          <button type="button" onClick={onClose}>Cancel</button>
-        </div>
+        <button type="submit" className="btn-primary">
+          {itemToEdit ? 'Update Inventory' : 'Add Inventory'}
+        </button>
       </form>
     </div>
   );

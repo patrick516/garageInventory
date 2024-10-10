@@ -13,10 +13,9 @@ import Footer from './Helper/Footer';
 import CustomerForm from './DashboardList/Customer';
 import PaymentForm from './DashboardList/PaymentForm';
 import DebtorList from './DashboardList/DebtorList';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-
+// Removed unused imports for FontAwesome
 import '../assets/styles/Dashboard.css';
+import logo from '../assets/images/uasLogo.jpg'; // Import your logo
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -35,7 +34,7 @@ const Dashboard = () => {
       window.logoutTimer = setTimeout(() => {
         authService.logout();
         navigate('/login');
-      }, 3000000);
+      }, 300000);
     };
 
     window.addEventListener('mousemove', handleUserActivity);
@@ -60,21 +59,26 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="sidebar">
           <div className="sidebar-header">
-          {user ? (
-          <>
-           <i className="fa-solid fa-user-nurse user-nurse-icon"></i>
-           <div className="online-status">Online</div>
-           <div className="user-greeting">Hi {user.username}</div> {/* Display the user's name */}
-          </>
-          ) : (
-         <h2>Navigation</h2>
-          )}
+            {user ? (
+              <>
+                {/* Replace the Font Awesome icon with the logo */}
+                <img 
+                  src={logo} // Use the imported logo
+                  alt="Logo" 
+                  className="user-logo" // Optional: Add a class for styling
+                />
+                <div className="online-status">Online</div>
+                <div className="user-greeting">Hi {user.username}</div> {/* Display the user's name */}
+              </>
+            ) : (
+              <h2>Navigation</h2>
+            )}
           </div>
           <ul className="menu-list">
             <li onClick={() => setActiveSection('AdminDashboard')}>Admin Dashboard</li>
             <li onClick={() => setActiveSection('AddInventory')}>Add Inventories</li>
             <li onClick={() => setActiveSection('InventoryList')}>Inventory List</li>
-            <li onClick={() => setActiveSection('Notifications')}>Notifications</li>
+            <li onClick={() => setActiveSection('Notifications')}>Supplier</li>
             <li onClick={() => setActiveSection('CustomerForm')}>Add Customer</li>
             <li onClick={() => setActiveSection('PaymentForm')}>Record Payment</li>
             <li onClick={() => setActiveSection('DebtorList')}>Debtor List</li>

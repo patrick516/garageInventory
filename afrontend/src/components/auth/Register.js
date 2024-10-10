@@ -12,27 +12,47 @@ const RegisterPage = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    // Check if all fields are filled
+    if (!username || !email || !password || !confirmPassword) {
+      setMessage({ text: 'All fields are required', type: 'error' });
+      return;
+    }
+
+    // Check if the passwords match
     if (password !== confirmPassword) {
       setMessage({ text: "Passwords don't match", type: 'error' });
       return;
     }
+
     try {
+      // Call the register function from authService with the correct parameters
+      console.log('Sending registration request to backend...');
       const response = await authService.register(username, password, email);
       console.log('Registration successful:', response);
+
       setMessage({ text: 'Registration successful', type: 'success' });
-      
+
       // Reset the form fields
       setUsername('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
     } catch (error) {
-      if (error.message === 'Email already registered') {
-        setMessage({ text: 'User already exists', type: 'error' });
+      console.error('Error occurred during registration:', error);
+
+      // Check for specific error messages from the server
+      if (error.response && error.response.data && error.response.data.message) {
+        console.log('Backend error message:', error.response.data.message);
+        if (error.response.data.message === 'Email already registered') {
+          setMessage({ text: 'User already exists', type: 'error' });
+        } else {
+          setMessage({ text: 'Registration failed: ' + error.response.data.message, type: 'error' });
+        }
       } else {
         setMessage({ text: 'Registration failed', type: 'error' });
+        console.log('Generic registration failure.');
       }
-      console.error('Registration failed:', error);
     }
   };
 

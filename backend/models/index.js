@@ -45,6 +45,7 @@ db.Customer = require('../models/customerModel');// Import customer model
 db.Sales = require('../models/salesModel');      // Import sales model
 db.Employee = require('../models/employeeModel');      // Import sales model
 db.Salary = require('../models/salaryModel');
+db.Supplier = require('../models/supplierModel');
 
 // Export the db object
 module.exports = db;

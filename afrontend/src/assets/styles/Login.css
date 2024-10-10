@@ -32,6 +32,24 @@
   box-sizing: border-box;
 }
 
+/* Styles for password container with toggle eye */
+.password-container {
+  position: relative;
+}
+
+.password-container input {
+  width: calc(100% - 30px); /* Adjust width to accommodate the eye icon */
+  padding-right: 30px; /* Ensure there's space for the eye icon */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px; /* Position it to the right inside the input field */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+  cursor: pointer;
+}
+
 button {
   width: 100%;
   padding: 10px;
@@ -48,8 +66,14 @@ button:hover {
 
 .login-options {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
   margin-top: 10px;
+}
+
+.forgot-password-link,
+.register-link {
+  margin-bottom: 5px;
 }
 
 .login-options a {
@@ -85,24 +109,3 @@ button:hover {
   background-color: #f44336; /* Red for errors */
   color: white;
 }
-.login-options {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-top: 10px;
-}
-
-.forgot-password-link,
-.register-link {
-  margin-bottom: 5px;
-}
-
-.login-options a {
-  color: #000080;
-  text-decoration: none;
-}
-
-.login-options a:hover {
-  text-decoration: underline;
-}
-

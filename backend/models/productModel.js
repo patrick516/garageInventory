@@ -9,11 +9,11 @@ const Product = sequelize.define('Product', {
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true, // Made optional
   },
   brand: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true, // Made optional
   },
   quantity: {
     type: DataTypes.INTEGER,
@@ -42,6 +42,11 @@ const Product = sequelize.define('Product', {
   totalCostOfSales: {
     type: DataTypes.FLOAT,
     allowNull: false,
+  },
+  barcode: {
+    type: DataTypes.STRING,
+    allowNull: true, // Ensure barcode is mandatory
+    unique: true,     // Ensure no duplicate barcodes
   },
 }, {
   tableName: 'products', // Ensure this matches your table name

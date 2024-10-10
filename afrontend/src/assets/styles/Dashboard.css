@@ -39,11 +39,11 @@
   margin-bottom: 10px;
 }
 
-.sidebar .user-nurse-icon {
-  font-size: 50px;
-  margin-right: 15px;
-  color: #FFFFFF; 
-  margin-bottom: 2px;
+.sidebar  .user-logo {
+  width: 80px;
+  height: auto; 
+  margin-right: 15px; 
+  margin-bottom: 2px; 
 }
 
 .sidebar .online-status {
@@ -53,11 +53,10 @@
 }
 
 .sidebar .menu-list {
-  flex-grow: 1; /* Take up the remaining space */
+  flex-grow: 1; 
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center the menu items vertically */
-  padding: 0;
+  justify-content: center;
 }
 
 .sidebar ul {
@@ -80,7 +79,6 @@
   padding: 20px;
   min-height: 100vh; /* Ensures the main content covers the full height of the viewport */
   overflow-y: auto;
-  /* Make sure there's no width restriction */
   width: 100%;
 }
 .user-greeting {

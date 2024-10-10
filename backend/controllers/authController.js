@@ -1,4 +1,3 @@
-// backend/controllers/authController.js
 require('dotenv').config();
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
@@ -7,7 +6,9 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const { Op } = require('sequelize');
 
+// Registration Controller
 exports.register = async (req, res) => {
+  console.log('Received data in register:', req.body); // Log incoming data
   const { username, email, password, confirmPassword } = req.body;
 
   // Validate input
@@ -15,17 +16,22 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
+  // Validate passwords
   if (password !== confirmPassword) {
     return res.status(400).json({ message: 'Passwords do not match' });
   }
 
   try {
+    // Check if email is already registered
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log('Hashed Password:', hashedPassword); // Debugging line
-
-    // Create user with hashed password
+    // Create new user
     const user = await User.create({
       username,
       email,
@@ -39,6 +45,7 @@ exports.register = async (req, res) => {
   }
 };
 
+// Login Controller
 exports.login = async (req, res) => {
   const { username, password } = req.body;
 
@@ -49,6 +56,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
+    // Create token
     const token = jwt.sign(
       { id: user.id, username: user.username },
       process.env.JWT_SECRET,
@@ -62,7 +70,7 @@ exports.login = async (req, res) => {
   }
 };
 
-
+// Forgot Password Controller
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
   console.log('Forgot password request received for email:', email);
@@ -72,18 +80,16 @@ exports.forgotPassword = async (req, res) => {
     console.log('User found for forgot password:', user);
 
     if (!user) {
-      console.log('User not found:', email);
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
-    console.log('Reset token generated:', resetToken);
-
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
     await user.save();
-    console.log('User updated with reset token and expiration time');
 
+    // Send reset email
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
@@ -92,45 +98,30 @@ exports.forgotPassword = async (req, res) => {
       }
     });
 
-    transporter.verify((error, success) => {
-      if (error) {
-        console.error('Error with email configuration:', error);
-        return res.status(500).json({ message: 'Error with email configuration' });
-      } else {
-        console.log('Email configuration is working:', success);
-        
-        const mailOptions = {
-          to: user.email,
-          from: process.env.EMAIL_USERNAME,
-          subject: 'Password Reset',
-          text: `You requested a password reset. Please use the following link to reset your password: http://${req.headers.host}/reset/${resetToken}`
-        };
+    const mailOptions = {
+      to: user.email,
+      from: process.env.EMAIL_USERNAME,
+      subject: 'Password Reset',
+      text: `You requested a password reset. Please use the following link to reset your password: http://${req.headers.host}/reset/${resetToken}`
+    };
 
-        transporter.sendMail(mailOptions)
-          .then(() => {
-            console.log('Password reset email sent to:', user.email);
-            res.status(200).json({ message: 'Password reset link sent to email' });
-          })
-          .catch(err => {
-            console.error('Error sending password reset email:', err);
-            res.status(500).json({ message: 'Error sending password reset email' });
-          });
-      }
-    });
-
+    await transporter.sendMail(mailOptions);
+    console.log('Password reset email sent to:', user.email);
+    res.status(200).json({ message: 'Password reset link sent to email' });
   } catch (error) {
     console.error('Error processing forgot password request:', error);
     res.status(500).json({ message: 'Error processing forgot password request' });
   }
 };
 
+// Reset Password Controller
 exports.resetPassword = async (req, res) => {
-  console.log('Reset password request received with token:', req.params.token);
   const { token } = req.params;
   const { password, confirmPassword } = req.body;
 
+  console.log('Reset password request received with token:', token);
+
   if (password !== confirmPassword) {
-    console.log('Passwords do not match');
     return res.status(400).json({ message: 'Passwords do not match' });
   }
 
@@ -141,20 +132,16 @@ exports.resetPassword = async (req, res) => {
         resetPasswordExpires: { [Op.gt]: Date.now() } // Check if token is not expired
       }
     });
-    console.log('User found for password reset:', user);
 
     if (!user) {
-      console.log('Password reset token is invalid or has expired:', token);
       return res.status(400).json({ message: 'Password reset token is invalid or has expired' });
     }
 
+    // Hash new password
     user.password = await bcrypt.hash(password, 10);
-    console.log('Password hashed successfully for reset');
-
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
     await user.save();
-    console.log('User password reset successfully and token cleared');
 
     res.status(200).json({ message: 'Password has been reset' });
   } catch (error) {

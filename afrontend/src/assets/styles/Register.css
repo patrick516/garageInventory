@@ -12,10 +12,11 @@
 
 .register-form {
     background-color: rgba(255, 255, 255, 0.8); /* White background with transparency */
-    padding: 20px;
+    padding: 2px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 350px;
+
 }
 
 .form-group {
@@ -79,3 +80,23 @@ button:hover {
     background-color: #f44336; /* Red for errors */
     color: white;
   }
+
+
+
+  /* Password input with toggle icon */
+.password-input-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.password-input-wrapper input {
+    flex-grow: 1;
+    padding-right: 30px; /* Add padding to prevent overlap with the eye icon */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}

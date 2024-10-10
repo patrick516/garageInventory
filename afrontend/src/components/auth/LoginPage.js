@@ -8,6 +8,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [popupMessage, setPopupMessage] = useState(null);
   const [popupType, setPopupType] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Step 1: State for password visibility
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -48,11 +49,22 @@ const LoginPage = () => {
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="password-container"> {/* Step 2: Container for password input and eye icon */}
+              <input
+                type={isPasswordVisible ? 'text' : 'password'} // Update input type based on visibility state
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <span 
+                className="toggle-password" 
+                onClick={() => setIsPasswordVisible(!isPasswordVisible)} // Step 3: Toggle visibility
+                role="button" 
+                tabIndex={0} 
+                onKeyDown={(e) => e.key === 'Enter' && setIsPasswordVisible(!isPasswordVisible)} // Accessibility
+              >
+                {isPasswordVisible ? '👁️' : '👁️‍🗨️'} {/* Eye icon representation */}
+              </span>
+            </div>
           </div>
           <button type="submit">Login</button>
         </form>

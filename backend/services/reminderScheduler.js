@@ -1,11 +1,13 @@
 const cron = require('node-cron');
 const sendEmail = require('./mailer'); // Adjust path to mailer if necessary
 const Customer = require('../models/customerModel'); // Adjust path if necessary
+const Supplier = require('../models/supplierModel'); // Adjust path if necessary
+const Product = require('../models/productModel'); // Adjust path to product model
+const { Op } = require('sequelize'); // Import Sequelize operators
 
 const sendReminderEmails = async () => {
   try {
     const customers = await Customer.findAll({ where: { isDebtor: true } });
-
     const currentDate = new Date();
 
     for (const customer of customers) {
@@ -44,6 +46,37 @@ const sendReminderEmails = async () => {
         }
       }
     }
+
+    // Check low stock items and notify suppliers
+    /*const lowStockProducts = await Product.findAll({ where: { quantity: { [Op.lte]: 2 } } });
+
+    for (const product of lowStockProducts) {
+      const supplier = await Supplier.findOne({ where: { id: product.supplierId } });
+
+      if (supplier) {
+        const email = supplier.email; // Supplier's email
+        const productName = product.name; // Name of the product
+        const lastLowStockEmailSent = supplier.lastLowStockEmailSent ? new Date(supplier.lastLowStockEmailSent) : null;
+
+        // Calculate the difference in days between the last email and the current date
+        const daysSinceLastLowStockEmail = lastLowStockEmailSent
+          ? Math.floor((currentDate - lastLowStockEmailSent) / (1000 * 60 * 60 * 24))
+          : null;
+
+        // Send low stock reminder if no email was sent in the last 5 days
+        if (!lastLowStockEmailSent || daysSinceLastLowStockEmail >= 5) {
+          await sendEmail(
+            email,
+            'Low Stock Alert',
+            `Dear Supplier,\n\nThis is a reminder that the inventory for "${productName}" is running low. Please replenish your stock.\n\nThank you!`
+          );
+
+          // Update the lastLowStockEmailSent field to the current date
+          await supplier.update({ lastLowStockEmailSent: currentDate });
+        }
+      }
+    }
+    */
   } catch (error) {
     console.error('Error sending reminder emails:', error);
   }

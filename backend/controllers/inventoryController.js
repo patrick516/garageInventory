@@ -1,8 +1,9 @@
 const Product = require('../models/productModel');
 
-// Add inventory function
+// Add inventory function with barcode check
 exports.addInventory = async (req, res) => {
   const {
+    barcode, // Add barcode to the request body
     name,
     brand,
     quantity,
@@ -15,10 +16,26 @@ exports.addInventory = async (req, res) => {
   } = req.body;
 
   try {
+    // Check if a product with the same barcode exists
+    let existingProduct = await Product.findOne({ where: { barcode } });
+
+    if (existingProduct) {
+      // If product exists, increment the quantity
+      existingProduct.quantity += quantity || 1; // Default increment by 1 if no quantity is provided
+      await existingProduct.save();
+
+      return res.status(200).json({
+        message: 'Product already exists, quantity updated',
+        product: existingProduct
+      });
+    }
+
+    // If product doesn't exist, create a new product
     const newProduct = await Product.create({
-      name,
-      brand,
-      quantity,
+      barcode, // Save the barcode
+      name, // Optional when using barcode
+      brand, // Optional when using barcode
+      quantity: quantity || 1, // Default to 1 if no quantity is provided
       costPricePerUnit,
       anyCostIncurred,
       descriptionOfCost,
@@ -28,7 +45,7 @@ exports.addInventory = async (req, res) => {
     });
 
     res.status(201).json({
-      message: 'Inventory item added successfully',
+      message: 'New product added successfully',
       product: newProduct
     });
   } catch (error) {
@@ -71,6 +88,7 @@ exports.deleteInventory = async (req, res) => {
 exports.updateInventory = async (req, res) => {
   const { id } = req.params;
   const {
+    barcode, // Allow updating barcode as well
     name,
     brand,
     quantity,
@@ -90,10 +108,11 @@ exports.updateInventory = async (req, res) => {
     }
 
     // Update product details
+    product.barcode = barcode || product.barcode;
     product.name = name || product.name;
     product.brand = brand || product.brand;
     product.quantity = quantity || product.quantity;
-    product.costPricePerUnit = costPerUnit || product.costPricePerUnit;
+    product.costPricePerUnit = costPricePerUnit || product.costPricePerUnit;
     product.anyCostIncurred = anyCostIncurred || product.anyCostIncurred;
     product.descriptionOfCost = descriptionOfCost || product.descriptionOfCost;
     product.totalCosts = totalCosts || product.totalCosts;
